@@ -12,6 +12,9 @@ day = datetime.date.today().day
 date = str(year)+'-'+str(month)+'-'+str(day)
 
 
+## event data
+## s3 업로드
+
 s3 = boto3.client('s3')
 
 try:
@@ -22,6 +25,8 @@ try:
 except:
     print('error in uploading EventData')
 
+
+## glue job 생성
 
 client = boto3.client('glue')
 
@@ -53,6 +58,7 @@ except:
     print('error in creating event-{} job'.format(date))
 
 
+## glue job 실행
 
 try:
     response = client.start_job_run(
@@ -64,6 +70,8 @@ except:
     print('error in starting event-{} job'.format(date))
 
 
+## glue job status 체크 (완료 대기)
+
 jobrunstate = 'RUNNING'
 while jobrunstate != 'SUCCEEDED':
     response1 = client.get_job_run(JobName = 'toretto-event-{}'.format(date), 
@@ -72,6 +80,8 @@ while jobrunstate != 'SUCCEEDED':
     print('event etl job is ' + jobrunstate)
     time.sleep(12)
 
+
+## glue crawler 생성
 try:
     response = client.create_crawler(
         Name='glue-toretto-event-{}'.format(date),
@@ -93,6 +103,7 @@ try:
 except:
     print("error in creating event crawler")
 
+## glue crawler 실행 및 status 체크 (완료 대기)
 
 try:
     response = client.start_crawler(
@@ -118,6 +129,7 @@ except:
 
 
 ### attribution
+## s3 업로드
 
 try:
     reponse = s3.upload_file('./attributiondata/part-00000', 
@@ -127,6 +139,8 @@ try:
 except:
     print('error in uploading AttributionData')
 
+
+## glue job 생성
 
 client = boto3.client('glue')
 
@@ -158,6 +172,7 @@ except:
     print('error in creating attribution-{} job'.format(date))
 
 
+## glue job 실행
 
 try:
     response = client.start_job_run(
@@ -169,6 +184,8 @@ except:
     print('error in starting attribution-{} job'.format(date))
 
 
+## glue job status 체크 (완료 대기)
+
 jobrunstate = 'RUNNING'
 while jobrunstate != 'SUCCEEDED':
     response1 = client.get_job_run(JobName = 'toretto-attribution-{}'.format(date), 
@@ -176,6 +193,9 @@ while jobrunstate != 'SUCCEEDED':
     jobrunstate = response1['JobRun']['JobRunState']
     print('attribution etl job is ' + jobrunstate)
     time.sleep(12)
+
+
+## glue crawler 생성
 
 try:
     response = client.create_crawler(
@@ -199,6 +219,8 @@ except:
     print("error in creating attribution crawler")
 
 
+## glue crawler 실행 및 status 체크 (완료 대기)
+
 try:
     response = client.start_crawler(
         Name='glue-toretto-attribution-{}'.format(date)
@@ -218,6 +240,9 @@ try:
     print('Attribution Data Processing Finished')
 except:
     print("error in starting attribution crawler")
+
+
+## 종료 메세지
 
 print('All Processes Finished')
 print('You Can Use Athena To Query Now')
