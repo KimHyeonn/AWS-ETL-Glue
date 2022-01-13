@@ -1,4 +1,6 @@
-# AWS-GLUE-ETL
+# AWS-ETL
+
+1. Glue
 ETL.py로
 날짜별로 생성된 EventData / AttributionData (CSV 형식)을
 1) S3 버킷 내 날짜에 맞는 폴더 생성 후, 업로드
@@ -10,3 +12,6 @@ ETL.py로
 
 
 다음 작업 : EMR Cluster 생성 및 ETL 작업 실행
+
+
+2. EMR
