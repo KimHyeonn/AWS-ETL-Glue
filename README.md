@@ -12,6 +12,4 @@ ETL.py로
 
 
 다음 작업 : EMR Cluster 생성 및 ETL 작업 실행
-
-
-2. EMR
+https://github.com/KimHyeonn/AWS-ETL-EMR
